@@ -1,20 +1,48 @@
 # @author
 # @license {@link http://github.com|MIT}
 
-angular.module 'app', []
-
 class Calculator extends Directive
 
-  constructor: ($log) ->
+  constructor: ($log, $window) ->
+    window = $window
+
     directiveDefinitionObject =
       restrict: 'E'
       scope: {}
-      template: '<h1>Test</h1><input type="number" ng-model="numberField" number-field /><button type="button" ng-repeat="num in nums" ng-click="addNumber(num)">{{num}}</button><button type="button" ng-class="{\'active\': activeOperator == \'add\'}" ng-click="operator(\'add\')">+</button><button type="button" ng-class="{\'active\': activeOperator == \'subsctract\'}" ng-click="operator(\'substract\')">-</button><button type="button" ng-class="{\'active\': activeOperator == \'multiply\'}" ng-click="operator(\'multiply\')">*</button><button type="button" ng-class="{\'active\': activeOperator == \'divide\'}" ng-click="operator(\'divide\')">/</button><button type="button" ng-click="resetCalculator()" ng-bind="resetText">C</button><button type="button" ng-click="equals()">=</button>'
+      replace: true,
+      templateUrl: 'calculator.tmpl.html',
       link: (scope, element, attrs) ->
+
+        # Get height
+        # Maybe have a service?
+        #elemHeight = document[0].getElementsByClassName(attrs.class)[0].clientHeight
+        elemHeight = element[0].clientHeight
+        winHeight = window.innerHeight
+        elemWidth = element[0].clientWidth
+
+        # Get percentage
+        elemPercentage = (win, el) ->
+          if win > el
+            return win / el
+          else
+            return el / win
+
+        # Get the height available for each button (if 5 buttons height)
+        getInputFieldHeight = (win, buttons) ->
+          return (win - element.children()[0].clientHeight) / buttons
+
+        $log.debug 'What is the functions? ', element.children()[0], getInputFieldHeight(winHeight, 5)
+        #if not 'ontouchstart' in window
+        element.css
+          'minHeight': winHeight + 'px'
+          'minWidth': elemWidth * elemPercentage(winHeight, elemHeight) + 'px'
+
+
+
 
         dirty           = no
         dirtyResetState = no
-        numbers         = new Array
+        memory          = new Array
 
         # operators
         # @property add
@@ -35,14 +63,21 @@ class Calculator extends Directive
         # @property nums The digits.
         # @property activeOperator If view has active operator e.i. add, substract.
         # @property resetText The reset button text.
-        scope.nums = (num for num in [0...10])
+        scope.nums = [
+          {name:7}, {name:8}, {name:9},
+          {name:4}, {name:5}, {name:6},
+          {name:1}, {name:2}, {name:3},
+          {name:0, className: 'zero'}, {name:'.'}]
         scope.activeOperator = null
         scope.resetText = 'C'
 
-
         scope.equals = ->
           scope.operator(scope.activeOperator)
-          numbers.length = 0
+          memory.length = 0
+
+        element
+          .find('button')
+          .css 'height', getInputFieldHeight(winHeight, 5) + 'px'
 
         ###
          * Reset calculator
@@ -63,7 +98,7 @@ class Calculator extends Directive
 
           # Reset calculator to pristine state.
           else if dirtyResetState
-            numbers.length = 0
+            memory.length = 0
             scope.numberFieldModel.$setViewValue('')
             scope.numberFieldModel.$render()
             toggleReset(no, 'AC')
@@ -88,10 +123,10 @@ class Calculator extends Directive
         scope.addNumber = (x) ->
 
           # Reset value is returned to primary state
-          toggleReset(no, 'C') if dirtyResetState
+          toggleReset(no, 'C')
 
-          # 
-          if numbers.length > 0 and dirty
+          # Reset view value if second value input
+          if memory.length > 0 and dirty
             scope.numberFieldModel.$setViewValue('')
             scope.numberFieldModel.$render()
             dirty = no
@@ -106,25 +141,24 @@ class Calculator extends Directive
         # operator
         # @param operator The click event operator to use.
         scope.operator = (operator) ->
+          return if angular.isUndefined operator
+
           # Get the view value from input field.
           value = scope.numberField
+          # Set the active operator
+          this.activeOperator = operator
 
-          # Make sure it is empty
-          if numbers.length is 0 or not dirty
-            numbers.push(value)
-            dirty = yes
-
-          # Set current operator property
-          scope.activeOperator = operator
-
-          if numbers.length > 0 and dirty
-            result = operators[operator](numbers[0], value)
+          if memory.length isnt 0
+            result = operators[operator] memory[0], value
+            # Update view with new value
             scope.numberFieldModel.$setViewValue(result)
             scope.numberFieldModel.$render()
-            numbers.length = 0
-            numbers.push(result)
-            dirty = no
-
+            memory.length = 0
+            memory.push(result)
+            dirty = yes
+          else
+            memory.push value
+            dirty = yes # tell addNumbers to clear the field
 
         return
 
