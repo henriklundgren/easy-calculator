@@ -9,6 +9,7 @@ var less        = require('gulp-less');
 var header      = require('gulp-header');
 var footer      = require('gulp-footer');
 var concat      = require('gulp-concat');
+var gulpif      = require('gulp-if');
 
 gulp.task('css', function() {
   gulp
@@ -32,19 +33,19 @@ gulp.task('templatecache', function() {
       //filename: ''
       module: 'app'
     }))
-    .pipe(gulp.dest('./build/'))
+    .pipe(gulp.dest('./tmp/'));
 });
 
 gulp.task('scripts', function() {
   gulp
-    .src(['./src/**/*.coffee'])
-    .pipe(ngClassify())
-    .pipe(coffee({
+    .src(['./src/**/*.coffee', './tmp/**/*.js'])
+    .pipe(gulpif(/[.]coffee$/, ngClassify()))
+    .pipe(gulpif(/[.]coffee$/, coffee({
       bare: false
-    }))
+    })))
     .pipe(concat(pkg.name + '.js'))
     .pipe(header(fs.readFileSync('src/main.prefix.js', 'utf-8')))
-    .pipe(footer(fs.readFileSync('src/main.suffix.js')))
+    .pipe(footer(fs.readFileSync('src/main.suffix.js', 'utf-8')))
     .pipe(gulp.dest('./build/'));
 });
 

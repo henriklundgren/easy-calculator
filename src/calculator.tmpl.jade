@@ -3,7 +3,7 @@ div.calc-container.clearfix
     input(type="number", ng-model="numberField", data-number-field)
 
   div.digits
-    button(type="button", ng-repeat="num in nums", ng-click="addNumber(num.name)", ng-class="{ \'{{num.className}}\': num.className}").btn {{num.name}}
+    button(type="button", data-digits, ng-repeat="num in nums", ng-click="addNumber(num.name)", ng-class="{ \'{{num.className}}\': num.className}").btn {{num.name}}
     button(type="button", ng-click="resetCalculator()", ng-bind="resetText").btn.reset C
   div.operators
     button(type="button", ng-class="{\'active\': activeOperator == \'divide\'}", ng-click="operator(\'divide\')").btn /

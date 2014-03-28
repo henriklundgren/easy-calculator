@@ -1,7 +1,7 @@
 /**
- * @license 
- * (c)2014
- * License: {@link http://github.com|MIT}
+ * @author heni@twitter
+ * @copyright (c)2014 Henrik Lundgren
+ * @license: {@link http://github.com/henriklundgren|MIT}
  */
 
 (function(window) {

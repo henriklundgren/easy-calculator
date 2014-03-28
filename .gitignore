@@ -11,6 +11,7 @@ pids
 logs
 results
 build
+tmp
 
 node_modules
 
