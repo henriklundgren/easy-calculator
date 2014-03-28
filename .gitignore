@@ -12,6 +12,7 @@ logs
 results
 build
 tmp
+index.html
 
 node_modules
 

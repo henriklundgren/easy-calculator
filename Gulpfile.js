@@ -22,7 +22,7 @@ gulp.task('html', function() {
   gulp
     .src('./src/index.jade')
     .pipe(jade())
-    .pipe(gulp.dest('./example/'));
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('templatecache', function() {
