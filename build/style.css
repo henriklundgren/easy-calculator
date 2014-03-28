@@ -1,0 +1,54 @@
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+.calc-container {
+  width: 600px;
+}
+.calc-container .input-group > input {
+  -moz-box-sizing: padding-box;
+  box-sizing: padding-box;
+  width: 100%;
+  font-size: 48px;
+  padding: 12px 6px;
+  border: 0 none;
+  border-bottom: thin solid;
+  font-family: 'droid sans mono';
+  text-align: right;
+}
+.calc-container .digits {
+  width: 75%;
+  float: left;
+}
+.calc-container .digits .btn {
+  background-color: #f7f7f7;
+  width: 33.3333%;
+}
+.calc-container .digits .btn.zero {
+  width: 66.6666%;
+}
+.calc-container .digits .btn.reset {
+  background-color: orange;
+  width: 100%;
+}
+.calc-container .operators {
+  width: 25%;
+  float: left;
+}
+.calc-container .operators .btn {
+  font-weight: bold;
+  background-color: #add8e6;
+  border-width: 0 0 thin 0;
+  border-color: #000000;
+  width: 100%;
+}
+.calc-container .btn {
+  font-size: 36px;
+  line-height: 3;
+  border-width: 0 thin thin 0;
+  border-color: #000000;
+}
